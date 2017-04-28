@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 
 import java.net.URI;
@@ -33,7 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
-public class CustomerResourceIntegrationTest {
+public class CustomerControllerIntegrationTest {
 
 	@MockBean
 	private CustomerRepository repo;
@@ -43,9 +44,9 @@ public class CustomerResourceIntegrationTest {
 	@Before
 	public void init() {
 		webClient = WebTestClient
-				.bindToController(new CustomerController(repo))
-				.controllerAdvice(CustomerServiceExceptionHandler.class)  // Doesn't seem to work hence the HTTP 500 instead of HTTP 400 in some tests
-				.build();
+			.bindToController(new CustomerController(repo))
+			.controllerAdvice(CustomerServiceExceptionHandler.class)  // Doesn't seem to work hence the HTTP 500 instead of HTTP 400 in some tests
+			.build();
 	}
 
 	@Test
@@ -58,9 +59,9 @@ public class CustomerResourceIntegrationTest {
 			.expectStatus().isOk()	// HTTP 200
 			.expectHeader().contentType(APPLICATION_JSON_UTF8)
 			.expectBodyList(Customer.class).hasSize(2).consumeWith(customers -> {
-					assertThat(customers.stream().map(Customer::getCustomerType).collect(toList())
-							.containsAll(asList(PERSON, COMPANY)));
-				});
+				assertThat(customers.stream().map(Customer::getCustomerType).collect(toList())
+					.containsAll(asList(PERSON, COMPANY)));
+			});
 	}
 	
 	@Test
@@ -87,9 +88,9 @@ public class CustomerResourceIntegrationTest {
 			.expectStatus().isOk()	// HTTP 200
 			.expectBody(Customer.class)
 			.consumeWith(customer -> {
-					assertThat(customer.getCustomerType()).isEqualTo(PERSON);
-					assertThat(customer.getBirthDate()).isEqualTo(LocalDate.of(1990, 07, 31));
-				});
+				assertThat(customer.getCustomerType()).isEqualTo(PERSON);
+				assertThat(customer.getBirthDate()).isEqualTo(LocalDate.of(1990, 07, 31));
+			});
 	}
 
 	@Test
@@ -144,9 +145,7 @@ public class CustomerResourceIntegrationTest {
 			.contentType(APPLICATION_JSON_UTF8)
 			.body(fromObject(EXISTING_CUSTOMER))
 			.exchange()
-			.expectStatus().is5xxServerError(); // HTTP 500 because the
-												// exception handler is not
-												// used yet.
+			.expectStatus().is5xxServerError(); // HTTP 500 because the exception handler is not working yet.
 	}
 
 	@Test
@@ -157,7 +156,7 @@ public class CustomerResourceIntegrationTest {
 
 		final ObjectId id = ObjectId.get();
 		final String UPDATE = String.format(
-				"{\"id\":\"%s\",\"first_name\":\"John\",\"last_name\":\"Doe\",\"customer_type\":\"COMPANY\"}", id);
+			"{\"id\":\"%s\",\"first_name\":\"John\",\"last_name\":\"Doe\",\"customer_type\":\"COMPANY\"}", id);
 
 		webClient.put().uri(String.format("/customers/%s", id))
 			.contentType(APPLICATION_JSON_UTF8)
@@ -172,14 +171,12 @@ public class CustomerResourceIntegrationTest {
 
 		final ObjectId id = ObjectId.get();
 		final String UPDATE = String.format(
-				"{\"id\":\"%s\",\"first_name\":\"John\",\"last_name\":\"Doe\",\"customer_type\":\"COMPANY\"}", id);
+			"{\"id\":\"%s\",\"first_name\":\"John\",\"last_name\":\"Doe\",\"customer_type\":\"COMPANY\"}", id);
 
 		webClient.put().uri(String.format("/customers/%s", id))
 			.contentType(APPLICATION_JSON_UTF8)
 			.body(fromObject(UPDATE)).exchange()
-			.expectStatus().is5xxServerError(); // HTTP 500 because the
-												// exception handler is not
-												// working!
+			.expectStatus().is5xxServerError(); // HTTP 500 because the exception handler is not working yet.
 	}
 
 	@Test
@@ -203,5 +200,6 @@ public class CustomerResourceIntegrationTest {
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
+		verify(repo).delete(any(ObjectId.class)); // Must be called only once
 	}
 }

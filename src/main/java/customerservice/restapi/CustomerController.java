@@ -53,9 +53,9 @@ public class CustomerController {
 	public Mono<ResponseEntity<List<Customer>>> allCustomers() {
 
 		return repo.findAll().collectList()
-				.filter(customers -> customers.size() > 0)
-				.map(customers -> ok(customers))
-				.defaultIfEmpty(noContent().build());
+			.filter(customers -> customers.size() > 0)
+			.map(customers -> ok(customers))
+			.defaultIfEmpty(noContent().build());
 	}
 
 	/**
@@ -73,8 +73,8 @@ public class CustomerController {
 	public Mono<ResponseEntity<Customer>> oneCustomer(@PathVariable @NotNull ObjectId id) {
 
 		return repo.findOne(id)
-				.map(customer -> ok().contentType(APPLICATION_JSON_UTF8).body(customer))
-				.defaultIfEmpty(notFound().build());
+			.map(customer -> ok().contentType(APPLICATION_JSON_UTF8).body(customer))
+			.defaultIfEmpty(notFound().build());
 	}
 
 	/**
@@ -91,19 +91,19 @@ public class CustomerController {
 	public Mono<ResponseEntity<?>> addCustomer(@RequestBody @Valid Customer newCustomer) {
 
 		return Mono.justOrEmpty(newCustomer.getId())
-				.flatMap(id -> repo.exists(id))
-				.defaultIfEmpty(Boolean.FALSE)
-				.flatMap(exists -> {
+			.flatMap(id -> repo.exists(id))
+			.defaultIfEmpty(Boolean.FALSE)
+			.flatMap(exists -> {
 
-					if (exists) {
-						throw new CustomerServiceException(HttpStatus.BAD_REQUEST,
-								"Customer already exists, to update an existing customer use PUT instead.");
-					}
+				if (exists) {
+					throw new CustomerServiceException(HttpStatus.BAD_REQUEST,
+						"Customer already exists, to update an existing customer use PUT instead.");
+				}
 
-					return repo.save(newCustomer).map(saved -> {
-						return created(URI.create(format("/customers/%s", saved.getId()))).build();
-					});
+				return repo.save(newCustomer).map(saved -> {
+					return created(URI.create(format("/customers/%s", saved.getId()))).build();
 				});
+			});
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class CustomerController {
 
 			if (!exists) {
 				throw new CustomerServiceException(HttpStatus.BAD_REQUEST,
-						"Customer does not exist, to create a new customer use POST instead.");
+					"Customer does not exist, to create a new customer use POST instead.");
 			}
 
 			return repo.save(customerToUpdate).then(Mono.just(noContent().build()));
@@ -154,8 +154,8 @@ public class CustomerController {
 		final Mono<ResponseEntity<?>> noContent = Mono.just(noContent().build());
 
 		return repo.exists(id)
-				.filter(Boolean::valueOf) // Delete only if customer exists
-				.flatMap(exists -> repo.delete(id).then(noContent))
-				.switchIfEmpty(noContent);
+			.filter(Boolean::valueOf) // Delete only if customer exists
+			.flatMap(exists -> repo.delete(id).then(noContent))
+			.switchIfEmpty(noContent);
 	}
 }

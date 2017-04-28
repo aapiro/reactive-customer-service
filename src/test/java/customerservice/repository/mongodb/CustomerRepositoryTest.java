@@ -39,12 +39,19 @@ public class CustomerRepositoryTest {
 	public void shouldCreateAPerson() {
 
 		// Given
-		final Address address = Address.ofCountry("Shadaloo").withStreetNumber(110).withStreetName("Bison street")
-				.withCity("Shadaloo City").withZipcode("123456").build();
+		final Address address = Address.ofCountry("Shadaloo")
+				.withStreetNumber(110)
+				.withStreetName("Bison street")
+				.withCity("Shadaloo City")
+				.withZipcode("123456")
+				.build();
 
 		// When
-		final Customer saved = repo
-				.save(Customer.ofType(PERSON).withFirstName("Ken").withLastName("Masters").withAddress(address).build())
+		final Customer saved = repo.save(
+				Customer.ofType(PERSON)
+					.withFirstName("Ken")
+					.withLastName("Masters")
+					.withAddress(address).build())
 				.block();
 
 		// Then
@@ -57,10 +64,18 @@ public class CustomerRepositoryTest {
 	public void shouldFindAPersonWithItsId() {
 
 		// Given
-		final Address address = Address.ofCountry("Shadaloo").withStreetNumber(110).withStreetName("Bison street")
-				.withCity("Shadaloo City").withZipcode("123456").build();
-		final Customer saved = repo
-				.save(Customer.ofType(PERSON).withFirstName("Ken").withLastName("Masters").withAddress(address).build())
+		final Address address = Address.ofCountry("Shadaloo")
+				.withStreetNumber(110)
+				.withStreetName("Bison street")
+				.withCity("Shadaloo City")
+				.withZipcode("123456")
+				.build();
+		final Customer saved = repo.save(
+				Customer.ofType(PERSON)
+					.withFirstName("Ken")
+					.withLastName("Masters")
+					.withAddress(address)
+					.build())
 				.block();
 
 		// When
@@ -77,14 +92,25 @@ public class CustomerRepositoryTest {
 	public void shouldUpdateAPerson() {
 
 		// Given
-		Address address = Address.ofCountry("Shadaloo").withStreetNumber(110).withStreetName("Bison street")
-				.withCity("Shadaloo City").withZipcode("123456").build();
-		final Customer saved = repo
-				.save(Customer.ofType(PERSON).withFirstName("Ken").withLastName("Masters").withAddress(address).build())
+		Address address = Address.ofCountry("Shadaloo")
+				.withStreetNumber(110)
+				.withStreetName("Bison street")
+				.withCity("Shadaloo City")
+				.withZipcode("123456")
+				.build();
+		final Customer saved = repo.save(
+				Customer.ofType(PERSON)
+					.withFirstName("Ken")
+					.withLastName("Masters")
+					.withAddress(address)
+					.build())
 				.block();
 		Customer retrieved = repo.findOne(saved.getId()).block();
 		address = Address.from(address).withZipcode("654321").build();
-		retrieved = Customer.from(retrieved).withEmail("kenm@email.com").withAddress(address).build();
+		retrieved = Customer.from(retrieved)
+				.withEmail("kenm@email.com")
+				.withAddress(address)
+				.build();
 
 		// When
 		final Customer updated = repo.save(retrieved).block();
@@ -99,7 +125,11 @@ public class CustomerRepositoryTest {
 	public void shouldDeleteAPerson() {
 
 		// Given
-		final Customer saved = repo.save(Customer.ofType(PERSON).withFirstName("Ken").withLastName("Masters").build())
+		final Customer saved = repo.save(
+				Customer.ofType(PERSON)
+					.withFirstName("Ken")
+					.withLastName("Masters")
+					.build())
 				.block();
 
 		// When
@@ -114,11 +144,27 @@ public class CustomerRepositoryTest {
 	public void shouldReturnAllCustomers() {
 
 		// Given
-		final Address address = Address.ofCountry("Shadaloo").withStreetNumber(110).withStreetName("Bison street")
-				.withCity("Shadaloo City").withZipcode("123456").build();
-		repo.save(Customer.ofType(PERSON).withFirstName("Ken").withLastName("Masters").withAddress(address).build())
+		final Address address = Address.ofCountry("Shadaloo")
+				.withStreetNumber(110)
+				.withStreetName("Bison street")
+				.withCity("Shadaloo City")
+				.withZipcode("123456")
+				.build();
+		
+		repo.save(
+				Customer.ofType(PERSON)
+					.withFirstName("Ken")
+					.withLastName("Masters")
+					.withAddress(address)
+					.build())
 				.block();
-		repo.save(Customer.ofType(COMPANY).withFirstName("Ken").withLastName("Masters").withAddress(address).build())
+		
+		repo.save(
+				Customer.ofType(COMPANY)
+					.withFirstName("Ken")
+					.withLastName("Masters")
+					.withAddress(address)
+					.build())
 				.block();
 
 		// When

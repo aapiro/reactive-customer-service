@@ -34,7 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CustomerResourceTest {
+public class CustomerControllerTest {
 
 	@Mock
 	private CustomerRepository repo;
@@ -164,7 +164,8 @@ public class CustomerResourceTest {
 		// When
 		// Then
 		assertThatThrownBy(() -> controller.updateCustomer(newCustomer.getId(), newCustomer).block())
-				.isInstanceOf(CustomerServiceException.class).hasMessageContaining("Customer does not exist");
+				.isInstanceOf(CustomerServiceException.class)
+				.hasMessageContaining("Customer does not exist");
 	}
 
 	@Test

@@ -44,7 +44,7 @@ import customerservice.domain.Customer;
  * The application server (specified in pom.xml) is started and the service
  * deployed.
  * <p>
- * This class tests all CRUD operations in one big method.
+ * This class tests all CRUD operations in one big test.
  * 
  */
 @RunWith(SpringRunner.class)
@@ -52,7 +52,7 @@ import customerservice.domain.Customer;
 public class CustomerServiceTest {
 
 	@LocalServerPort
-    private int port;
+	private int port;
 
 	@Value("classpath:servicestore.pem")
 	private Resource pemResource;
@@ -81,10 +81,16 @@ public class CustomerServiceTest {
 		headers.add(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
 		headers.add(AUTHORIZATION, String.format("Bearer %s", requestToken(webClient)));
 
-		final Customer newCustomer = Customer.ofType(PERSON).withBirthDate(LocalDate.of(1990, Month.AUGUST, 16)).build();
+		final Customer newCustomer = Customer.ofType(PERSON)
+				.withBirthDate(LocalDate.of(1990, Month.AUGUST, 16))
+				.build();
 
 		// ---------- Create ----------
-		ClientResponse resp = webClient.post().uri("/customers").headers(headers).body(fromObject(newCustomer)).exchange().block();
+		ClientResponse resp = webClient.post().uri("/customers")
+				.headers(headers)
+				.body(fromObject(newCustomer))
+				.exchange()
+				.block();
 
 		assertThat(resp.statusCode()).isEqualTo(CREATED);
 		final String newCustomerUrl = resp.headers().header("Location").get(0);
@@ -98,8 +104,15 @@ public class CustomerServiceTest {
 		assertThat(createdCustomer.getId()).isNotNull();
 
 		// ---------- Update ----------
-		final Customer customerToUpdate = Customer.from(createdCustomer).withFirstName("John").withLastName("Doe").build();
-		resp = webClient.put().uri(newCustomerUrl).headers(headers).body(fromObject(customerToUpdate)).exchange().block();
+		final Customer customerToUpdate = Customer.from(createdCustomer)
+				.withFirstName("John")
+				.withLastName("Doe")
+				.build();
+		resp = webClient.put().uri(newCustomerUrl)
+				.headers(headers)
+				.body(fromObject(customerToUpdate))
+				.exchange()
+				.block();
 
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
 		resp = webClient.get().uri(newCustomerUrl).headers(headers).exchange().block();

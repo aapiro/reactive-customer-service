@@ -19,7 +19,8 @@ public class AddressTest {
 				.withStreetNumber(110)
 				.withStreetName("Bison street")
 				.withCity("Shadaloo City")
-				.withZipcode("123456").build();
+				.withZipcode("123456")
+				.build();
 
 		// Then
 		assertThat(address).isNotNull();
@@ -39,7 +40,8 @@ public class AddressTest {
 				.withStreetNumber(110)
 				.withStreetName("Bison street")
 				.withCity("Shadaloo City")
-				.withZipcode("123456").build();
+				.withZipcode("123456")
+				.build();
 
 		// When
 		address = Address.from(address).withStreetNumber(2000).build();
