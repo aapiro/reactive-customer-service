@@ -82,7 +82,7 @@ public class CustomerControllerIntegrationTest {
 		final Customer mockCustomer = Customer.ofType(PERSON).withBirthDate(birthDate).build();
 		final ObjectId id = ObjectId.get();
 
-		given(repo.findOne(any(ObjectId.class))).willReturn(Mono.just(mockCustomer));
+		given(repo.findById(any(ObjectId.class))).willReturn(Mono.just(mockCustomer));
 
 		webClient.get().uri(String.format("/customers/%s", id)).accept(APPLICATION_JSON_UTF8).exchange()
 			.expectStatus().isOk()	// HTTP 200
@@ -96,7 +96,7 @@ public class CustomerControllerIntegrationTest {
 	@Test
 	public void shouldReturn404IfCustomerNotFound() throws Exception {
 
-		given(repo.findOne(any(ObjectId.class))).willReturn(Mono.empty());
+		given(repo.findById(any(ObjectId.class))).willReturn(Mono.empty());
 
 		webClient.get().uri(String.format("/customers/%s", ObjectId.get())).accept(APPLICATION_JSON_UTF8).exchange()
 				.expectStatus().isNotFound() // HTTP 404
@@ -111,7 +111,7 @@ public class CustomerControllerIntegrationTest {
 		final ObjectId id = ObjectId.get();
 		ReflectionTestUtils.setField(newCustomer, "id", id);
 
-		given(repo.exists(any(ObjectId.class))).willReturn(Mono.just(false));
+		given(repo.existsById(any(ObjectId.class))).willReturn(Mono.just(false));
 		given(repo.save(any(Customer.class))).willReturn(Mono.just(newCustomer));
 
 		webClient.post().uri("/customers")
@@ -137,7 +137,7 @@ public class CustomerControllerIntegrationTest {
 	@Test
 	public void shouldNotAddCustomerIfCustomerAlreadyExists() throws Exception {
 
-		given(repo.exists(any(ObjectId.class))).willReturn(Mono.just(true));
+		given(repo.existsById(any(ObjectId.class))).willReturn(Mono.just(true));
 		final ObjectId id = ObjectId.get();
 
 		final String EXISTING_CUSTOMER = String.format("{\"id\":\"%s\",\"customer_type\":\"COMPANY\"}", id);
@@ -151,7 +151,7 @@ public class CustomerControllerIntegrationTest {
 	@Test
 	public void shouldUpdateAnExistingCustomer() throws Exception {
 
-		given(repo.exists(any(ObjectId.class))).willReturn(Mono.just(true));
+		given(repo.existsById(any(ObjectId.class))).willReturn(Mono.just(true));
 		given(repo.save(any(Customer.class))).willReturn(Mono.just(Customer.ofType(PERSON).build()));
 
 		final ObjectId id = ObjectId.get();
@@ -167,7 +167,7 @@ public class CustomerControllerIntegrationTest {
 	@Test
 	public void shouldFailUpdatingNonExistingCustomer() throws Exception {
 
-		given(repo.exists(any(ObjectId.class))).willReturn(Mono.just(false));
+		given(repo.existsById(any(ObjectId.class))).willReturn(Mono.just(false));
 
 		final ObjectId id = ObjectId.get();
 		final String UPDATE = String.format(
@@ -182,8 +182,8 @@ public class CustomerControllerIntegrationTest {
 	@Test
 	public void shouldDeleteAnExistingCustomer() throws Exception {
 
-		given(repo.exists(any(ObjectId.class))).willReturn(Mono.just(true));
-		given(repo.delete(any(ObjectId.class))).willReturn(Mono.empty());
+		given(repo.existsById(any(ObjectId.class))).willReturn(Mono.just(true));
+		given(repo.deleteById(any(ObjectId.class))).willReturn(Mono.empty());
 		final URI uri = URI.create(String.format("/customers/%s", ObjectId.get()));
 		
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
@@ -192,14 +192,14 @@ public class CustomerControllerIntegrationTest {
 	@Test
 	public void shouldDeleteExistingCustomerAndIgnoreFollowingCalls() throws Exception {
 
-		given(repo.exists(any(ObjectId.class))).willReturn(Mono.just(true)).willReturn(Mono.just(false));
-		given(repo.delete(any(ObjectId.class))).willReturn(Mono.empty());
+		given(repo.existsById(any(ObjectId.class))).willReturn(Mono.just(true)).willReturn(Mono.just(false));
+		given(repo.deleteById(any(ObjectId.class))).willReturn(Mono.empty());
 		final URI uri = URI.create(String.format("/customers/%s", ObjectId.get()));
 
 		// Expect HTTP 204 for each call
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
 		webClient.delete().uri(uri).exchange().expectStatus().isNoContent();
-		verify(repo).delete(any(ObjectId.class)); // Must be called only once
+		verify(repo).deleteById(any(ObjectId.class)); // Must be called only once
 	}
 }

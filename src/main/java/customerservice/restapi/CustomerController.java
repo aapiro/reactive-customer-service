@@ -72,7 +72,7 @@ public class CustomerController {
 	@RequestMapping(method = GET, value = "/{id}")
 	public Mono<ResponseEntity<Customer>> oneCustomer(@PathVariable @NotNull ObjectId id) {
 
-		return repo.findOne(id)
+		return repo.findById(id)
 			.map(customer -> ok().contentType(APPLICATION_JSON_UTF8).body(customer))
 			.defaultIfEmpty(notFound().build());
 	}
@@ -91,7 +91,7 @@ public class CustomerController {
 	public Mono<ResponseEntity<?>> addCustomer(@RequestBody @Valid Customer newCustomer) {
 
 		return Mono.justOrEmpty(newCustomer.getId())
-			.flatMap(id -> repo.exists(id))
+			.flatMap(id -> repo.existsById(id))
 			.defaultIfEmpty(Boolean.FALSE)
 			.flatMap(exists -> {
 
@@ -125,7 +125,7 @@ public class CustomerController {
 	public Mono<ResponseEntity<?>> updateCustomer(@PathVariable @NotNull ObjectId id,
 			@RequestBody @Valid Customer customerToUpdate) {
 
-		return repo.exists(id).flatMap(exists -> {
+		return repo.existsById(id).flatMap(exists -> {
 
 			if (!exists) {
 				throw new CustomerServiceException(HttpStatus.BAD_REQUEST,
@@ -153,9 +153,9 @@ public class CustomerController {
 
 		final Mono<ResponseEntity<?>> noContent = Mono.just(noContent().build());
 
-		return repo.exists(id)
+		return repo.existsById(id)
 			.filter(Boolean::valueOf) // Delete only if customer exists
-			.flatMap(exists -> repo.delete(id).then(noContent))
+			.flatMap(exists -> repo.deleteById(id).then(noContent))
 			.switchIfEmpty(noContent);
 	}
 }

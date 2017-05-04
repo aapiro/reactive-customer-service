@@ -75,7 +75,7 @@ public class CustomerControllerTest {
 
 		// Given
 		final Customer customer = Customer.ofType(PERSON).build();
-		when(repo.findOne(any(ObjectId.class))).thenReturn(Mono.just(customer));
+		when(repo.findById(any(ObjectId.class))).thenReturn(Mono.just(customer));
 
 		// When
 		final ResponseEntity<Customer> response = controller.oneCustomer(ObjectId.get()).block();
@@ -89,7 +89,7 @@ public class CustomerControllerTest {
 	public void shouldReturn404IfCustomerIsNotFound() {
 
 		// Given
-		when(repo.findOne(any(ObjectId.class))).thenReturn(Mono.empty());
+		when(repo.findById(any(ObjectId.class))).thenReturn(Mono.empty());
 
 		// When
 		final ResponseEntity<Customer> response = controller.oneCustomer(ObjectId.get()).block();
@@ -108,7 +108,7 @@ public class CustomerControllerTest {
 		final ObjectId id = ObjectId.get();
 		ReflectionTestUtils.setField(newCustomer, "id", id);
 
-		when(repo.exists(any(ObjectId.class))).thenReturn(Mono.just(false));
+		when(repo.existsById(any(ObjectId.class))).thenReturn(Mono.just(false));
 		when(repo.save(any(Customer.class))).thenReturn(Mono.just(newCustomer));
 
 		// When
@@ -123,7 +123,7 @@ public class CustomerControllerTest {
 	public void shouldNotAddACustomerIfCustomerAlreadyExists() throws Exception {
 
 		// Given
-		when(repo.exists(any(ObjectId.class))).thenReturn(Mono.just(true));
+		when(repo.existsById(any(ObjectId.class))).thenReturn(Mono.just(true));
 		final ObjectId id = ObjectId.get();
 		final Customer customer = Customer.ofType(PERSON).build();
 		ReflectionTestUtils.setField(customer, "id", id);
@@ -139,7 +139,7 @@ public class CustomerControllerTest {
 	public void shouldUpdateAnExistingCustomer() {
 
 		// Given
-		when(repo.exists(any(ObjectId.class))).thenReturn(Mono.just(true));
+		when(repo.existsById(any(ObjectId.class))).thenReturn(Mono.just(true));
 		when(repo.save(any(Customer.class))).thenReturn(Mono.just(Customer.ofType(PERSON).build()));
 		final ObjectId id = ObjectId.get();
 		final Customer existingCustomer = Customer.ofType(CustomerType.PERSON).build();
@@ -156,7 +156,7 @@ public class CustomerControllerTest {
 	public void shouldFailUpdatingNonExistingCustomer() {
 
 		// Given
-		when(repo.exists(any(ObjectId.class))).thenReturn(Mono.just(false));
+		when(repo.existsById(any(ObjectId.class))).thenReturn(Mono.just(false));
 		final ObjectId id = ObjectId.get();
 		final Customer newCustomer = Customer.ofType(CustomerType.PERSON).build();
 		ReflectionTestUtils.setField(newCustomer, "id", id);
@@ -172,8 +172,8 @@ public class CustomerControllerTest {
 	public void shouldDeleteAnExistingCustomer() {
 
 		// Given
-		when(repo.exists(any(ObjectId.class))).thenReturn(Mono.just(true));
-		when(repo.delete(any(ObjectId.class))).thenReturn(Mono.empty());
+		when(repo.existsById(any(ObjectId.class))).thenReturn(Mono.just(true));
+		when(repo.deleteById(any(ObjectId.class))).thenReturn(Mono.empty());
 		final ObjectId id = ObjectId.get();
 
 		// When
@@ -187,8 +187,8 @@ public class CustomerControllerTest {
 	public void shouldDeleteExistingCustomerAndIgnoreSubsequentCalls() throws Exception {
 
 		// Given
-		when(repo.exists(any(ObjectId.class))).thenReturn(Mono.just(true)).thenReturn(Mono.just(false));
-		when(repo.delete(any(ObjectId.class))).thenReturn(Mono.empty());
+		when(repo.existsById(any(ObjectId.class))).thenReturn(Mono.just(true)).thenReturn(Mono.just(false));
+		when(repo.deleteById(any(ObjectId.class))).thenReturn(Mono.empty());
 		final ObjectId id = ObjectId.get();
 
 		// When
@@ -197,7 +197,7 @@ public class CustomerControllerTest {
 		final ResponseEntity<?> response3 = controller.deleteCustomer(id).block();
 
 		// Then
-		verify(repo).delete(any(ObjectId.class)); // Must be called only once
+		verify(repo).deleteById(any(ObjectId.class)); // Must be called only once
 		assertThat(response1.getStatusCode()).isEqualTo(NO_CONTENT);
 		assertThat(response2.getStatusCode()).isEqualTo(NO_CONTENT);
 		assertThat(response3.getStatusCode()).isEqualTo(NO_CONTENT);

@@ -79,7 +79,7 @@ public class CustomerRepositoryTest {
 				.block();
 
 		// When
-		final Customer retrieved = repo.findOne(saved.getId()).block();
+		final Customer retrieved = repo.findById(saved.getId()).block();
 
 		// Then
 		assertThat(retrieved).isNotNull();
@@ -105,7 +105,7 @@ public class CustomerRepositoryTest {
 					.withAddress(address)
 					.build())
 				.block();
-		Customer retrieved = repo.findOne(saved.getId()).block();
+		Customer retrieved = repo.findById(saved.getId()).block();
 		address = Address.from(address).withZipcode("654321").build();
 		retrieved = Customer.from(retrieved)
 				.withEmail("kenm@email.com")
@@ -134,7 +134,7 @@ public class CustomerRepositoryTest {
 
 		// When
 		repo.delete(saved).block();
-		boolean exists = repo.exists(saved.getId()).block();
+		boolean exists = repo.existsById(saved.getId()).block();
 
 		// Then
 		assertThat(exists).isFalse();
