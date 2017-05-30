@@ -59,7 +59,7 @@ public class CustomerControllerIntegrationTest {
 			.expectStatus().isOk()	// HTTP 200
 			.expectHeader().contentType(APPLICATION_JSON_UTF8)
 			.expectBodyList(Customer.class).hasSize(2).consumeWith(customers -> {
-				assertThat(customers.stream().map(Customer::getCustomerType).collect(toList())
+				assertThat(customers.getResponseBody().stream().map(Customer::getCustomerType).collect(toList())
 					.containsAll(asList(PERSON, COMPANY)));
 			});
 	}
@@ -88,8 +88,8 @@ public class CustomerControllerIntegrationTest {
 			.expectStatus().isOk()	// HTTP 200
 			.expectBody(Customer.class)
 			.consumeWith(customer -> {
-				assertThat(customer.getCustomerType()).isEqualTo(PERSON);
-				assertThat(customer.getBirthDate()).isEqualTo(LocalDate.of(1990, 07, 31));
+				assertThat(customer.getResponseBody().getCustomerType()).isEqualTo(PERSON);
+				assertThat(customer.getResponseBody().getBirthDate()).isEqualTo(LocalDate.of(1990, 07, 31));
 			});
 	}
 
