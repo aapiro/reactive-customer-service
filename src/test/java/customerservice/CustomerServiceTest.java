@@ -76,10 +76,10 @@ public class CustomerServiceTest {
 
 		final WebClient webClient = createSSLWebClient();
 		
-		final HttpHeaders headers = new HttpHeaders();
-		headers.add(ACCEPT, APPLICATION_JSON_UTF8_VALUE);
-		headers.add(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
-		headers.add(AUTHORIZATION, String.format("Bearer %s", requestToken(webClient)));
+		final HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.add(ACCEPT, APPLICATION_JSON_UTF8_VALUE);
+		httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
+		httpHeaders.add(AUTHORIZATION, String.format("Bearer %s", requestToken(webClient)));
 
 		final Customer newCustomer = Customer.ofType(PERSON)
 				.withBirthDate(LocalDate.of(1990, Month.AUGUST, 16))
@@ -87,7 +87,7 @@ public class CustomerServiceTest {
 
 		// ---------- Create ----------
 		ClientResponse resp = webClient.post().uri("/customers")
-				.headers(headers)
+				.headers(headers -> headers.addAll(httpHeaders))
 				.body(fromObject(newCustomer))
 				.exchange()
 				.block();
@@ -97,7 +97,7 @@ public class CustomerServiceTest {
 		assertThat(newCustomerUrl).contains("/customers/");
 
 		// ---------- Read ----------
-		resp = webClient.get().uri(newCustomerUrl).headers(headers).exchange().block();
+		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
 		
 		assertThat(resp.statusCode()).isEqualTo(OK);
 		final Customer createdCustomer = resp.bodyToMono(Customer.class).block();
@@ -109,23 +109,23 @@ public class CustomerServiceTest {
 				.withLastName("Doe")
 				.build();
 		resp = webClient.put().uri(newCustomerUrl)
-				.headers(headers)
+				.headers(headers -> headers.addAll(httpHeaders))
 				.body(fromObject(customerToUpdate))
 				.exchange()
 				.block();
 
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
-		resp = webClient.get().uri(newCustomerUrl).headers(headers).exchange().block();
+		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
 		assertThat(resp.statusCode()).isEqualTo(OK);
 		final Customer updatedCustomer = resp.bodyToMono(Customer.class).block();
 		assertThat(updatedCustomer.getId()).isEqualTo(updatedCustomer.getId());
 		assertThat(updatedCustomer.getLastName()).isEqualTo("Doe");
 
 		// ---------- Delete ----------
-		resp = webClient.delete().uri(newCustomerUrl).headers(headers).exchange().block();
+		resp = webClient.delete().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
 
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
-		resp = webClient.get().uri(newCustomerUrl).headers(headers).exchange().block();
+		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
 		assertThat(resp.statusCode()).isEqualTo(NOT_FOUND);
 	}
 
@@ -139,7 +139,7 @@ public class CustomerServiceTest {
 	private String requestToken(WebClient webClient) {
 
 		/* Add Basic Authentication to the WebClient */
-		final WebClient webClientAuth = webClient.filter(basicAuthentication("clientId", "clientSecret"));
+		final WebClient webClientAuth = webClient.mutate().filter(basicAuthentication("clientId", "clientSecret")).build();
 		
 		final JsonNode tokenResp = webClientAuth.post().uri("/oauth/token")
 			.contentType(APPLICATION_FORM_URLENCODED)
