@@ -34,7 +34,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RunWith(SpringRunner.class)
-public class CustomerControllerIntegrationTest {
+public class CustomerControllerWebTest {
 
 	@MockBean
 	private CustomerRepository repo;

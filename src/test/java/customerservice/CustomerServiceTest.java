@@ -118,7 +118,7 @@ public class CustomerServiceTest {
 		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
 		assertThat(resp.statusCode()).isEqualTo(OK);
 		final Customer updatedCustomer = resp.bodyToMono(Customer.class).block();
-		assertThat(updatedCustomer.getId()).isEqualTo(updatedCustomer.getId());
+		assertThat(updatedCustomer.getFirstName()).isEqualTo("John");
 		assertThat(updatedCustomer.getLastName()).isEqualTo("Doe");
 
 		// ---------- Delete ----------
@@ -130,7 +130,7 @@ public class CustomerServiceTest {
 	}
 
 	/**
-	 * Request a OAuth2 token from the Authentication Server
+	 * Request an OAuth2 token from the Authentication Server
 	 * 
 	 * @param webClient The webClient to connect with
 	 * 
