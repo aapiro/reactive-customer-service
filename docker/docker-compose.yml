@@ -10,6 +10,7 @@ services:
   customers:
     container_name: customers
     build: .
+    image: dserradji/customers:0.0.1
     ports:
       - "8081:8081"
       - "8443:8443"
