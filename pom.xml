@@ -39,6 +39,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 		</dependency>
 		<dependency>
@@ -72,9 +76,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>com.fasterxml.jackson.module</groupId>
-		    <artifactId>jackson-module-kotlin</artifactId>
-		    <scope>test</scope>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-kotlin</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>
@@ -89,14 +93,13 @@
 	</build>
 
 	<profiles>
-	
+
 		<profile>
 			<id>default</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<dependencies>
-				<!-- Embedded MongoDB -->
 				<dependency>
 					<groupId>de.flapdoodle.embed</groupId>
 					<artifactId>de.flapdoodle.embed.mongo</artifactId>
@@ -110,11 +113,11 @@
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
-					    <artifactId>maven-surefire-plugin</artifactId>
-					    <configuration>
-					        <skipTests>true</skipTests>
-					    </configuration>
-					</plugin>					
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skipTests>true</skipTests>
+						</configuration>
+					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
@@ -124,84 +127,90 @@
 							</includes>
 						</configuration>
 					</plugin>
-<!-- 					<plugin> -->
-<!-- 						<groupId>io.fabric8</groupId> -->
-<!-- 						<artifactId>docker-maven-plugin</artifactId> -->
-<!-- 						<version>0.21.0</version> -->
-<!-- 						<configuration> -->
-<!-- 							<logDate>default</logDate> -->
-<!-- 							<autoPull>true</autoPull> -->
-<!-- 							<images> -->
+					<plugin>
+						<groupId>io.fabric8</groupId>
+						<artifactId>docker-maven-plugin</artifactId>
+						<version>0.21.0</version>
+						<configuration>
+							<logDate>default</logDate>
+							<autoPull>true</autoPull>
+							<removeAll>true</removeAll>
+							<images>
 
-<!-- 								<image> -->
-<!-- 									<alias>db</alias> -->
-<!-- 									<name>mongo:3.4</name> -->
-<!-- 									<run> -->
-<!-- 										<wait> -->
-<!-- 											<log>waiting for connections</log> -->
-<!-- 											<time>20000</time> -->
-<!-- 										</wait> -->
-<!-- 										<log> -->
-<!-- 											<prefix>DB</prefix> -->
-<!-- 											<color>yellow</color> -->
-<!-- 										</log> -->
-<!-- 									</run> -->
-<!-- 								</image> -->
+								<image>
+									<alias>db</alias>
+									<name>mongo:3.4</name>
+									<run>
+										<ports>
+											<port>27017</port>
+										</ports>
+										<wait>
+											<log>waiting for connections</log>
+											<time>20000</time>
+										</wait>
+										<log>
+											<prefix>MongoDB</prefix>
+											<color>yellow</color>
+										</log>
+									</run>
+								</image>
 
-<!-- 								<image> -->
-<!-- 									<alias>service</alias> -->
-<!-- 									<name>dserradji/${project.artifactId}:${project.version}</name> -->
+								<image>
+									<alias>service</alias>
+									<name>dserradji/${project.artifactId}:${project.version}</name>
 
-<!-- 									<build> -->
-<!-- 										<from>openjdk:8-jdk-alpine</from> -->
-<!-- 										<assembly> -->
-<!-- 											<descriptorRef>artifact</descriptorRef> -->
-<!-- 										</assembly> -->
-<!-- 										<ports> -->
-<!-- 											<port>8080</port> -->
-<!-- 										</ports> -->
-<!-- 										<cmd>java -Djava.security.egd=file:/dev/./urandom -jar -->
-<!-- 											/maven/reactive-customer-service-0.0.1-SNAPSHOT.jar</cmd> -->
-<!-- 									</build> -->
+									<build>
+										<from>openjdk:8-jdk</from>
+										<assembly>
+											<descriptorRef>artifact</descriptorRef>
+										</assembly>
+										<ports>
+											<port>8081</port>
+											<port>8443</port>
+										</ports>
+										<cmd>java -Djava.security.egd=file:/dev/./urandom -jar /maven/reactive-customer-service-0.0.1-SNAPSHOT.jar</cmd>
+									</build>
 
-<!-- 									<run> -->
-<!-- 										<ports> -->
-<!-- 											<port>tomcat.port:8080</port> -->
-<!-- 										</ports> -->
-<!-- 										<wait> -->
+									<run>
+										<ports>
+											<port>tomcat.port:8443</port>
+										</ports>
+										<wait>
 <!-- 											<url>http://${docker.host.address}:${tomcat.port}/access</url> -->
-<!-- 											<time>20000</time> -->
-<!-- 										</wait> -->
-<!-- 										<links> -->
-<!-- 											<link>db:db</link> -->
-<!-- 										</links> -->
-<!-- 										<log> -->
-<!-- 											<prefix>TC</prefix> -->
-<!-- 											<color>cyan</color> -->
-<!-- 										</log> -->
-<!-- 									</run> -->
-<!-- 								</image> -->
-<!-- 							</images> -->
-<!-- 						</configuration> -->
+											<url>http://${docker.host.address}:8081/application/health</url>
+<!-- 											<log>Started CustomerService</log> -->
+											<time>20000</time>
+										</wait>
+										<links>
+											<link>db</link>
+										</links>
+										<log>
+											<prefix>Tomcat</prefix>
+											<color>cyan</color>
+										</log>
+									</run>
+								</image>
+							</images>
+						</configuration>
 
-<!-- 						<executions> -->
-<!-- 							<execution> -->
-<!-- 								<id>start</id> -->
-<!-- 								<phase>pre-integration-test</phase> -->
-<!-- 								<goals> -->
-<!-- 									<goal>build</goal> -->
-<!-- 									<goal>start</goal> -->
-<!-- 								</goals> -->
-<!-- 							</execution> -->
-<!-- 							<execution> -->
-<!-- 								<id>stop</id> -->
-<!-- 								<phase>post-integration-test</phase> -->
-<!-- 								<goals> -->
-<!-- 									<goal>stop</goal> -->
-<!-- 								</goals> -->
-<!-- 							</execution> -->
-<!-- 						</executions> -->
-<!-- 					</plugin> -->
+						<executions>
+							<execution>
+								<id>start</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>build</goal>
+									<goal>start</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>stop</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
