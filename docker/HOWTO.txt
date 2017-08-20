@@ -1,5 +1,0 @@
-docker network create customers-net
-docker run --rm --name customers-mongo --network=customers-net -p 27017:27017 -d mongo
-cd docker
-docker build --tag=customers-service .
-docker run --rm --name customers-service --network=customers-net -p 8443:8443 -p 8081:8081 -d customers-service

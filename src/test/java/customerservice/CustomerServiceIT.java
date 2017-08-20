@@ -9,8 +9,13 @@ import static org.hamcrest.Matchers.notNullValue;
 import java.time.LocalDate;
 import java.time.Month;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import customerservice.domain.Customer;
 import io.restassured.RestAssured;
@@ -19,15 +24,20 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class CustomerServiceIT {
 
 	private static final String CLIENT_ID = "clientId";
 	private static final String CLIENT_SECRET = "clientSecret";
 
-	@BeforeClass
-	public static void init() {
+	@LocalServerPort
+	private int port;
+
+	@Before
+	public void init() {
 		RestAssured.baseURI = "https://localhost";
-		RestAssured.port = 8443;
+		RestAssured.port = this.port;
 	}
 	
 	@Test
