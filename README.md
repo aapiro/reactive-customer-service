@@ -7,7 +7,7 @@ More details can be found here: https://dserradji.wordpress.com/
 The "non-reactive" version is also available: [customer-service](https://github.com/dserradji/customer-service)
 
 ## Docker
-*reactive-customer-service* can be started inside a docker container with docker-compose.
+*reactive-customer-service* can be started inside a docker container with *docker-compose*.
 
 Configuration files are located in the *docker* directory, there are 2 files:
 - *Dockerfile*: this file describes the docker image of the service
