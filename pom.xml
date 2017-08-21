@@ -94,8 +94,31 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
+		</plugin>
+		<!-- Copy the generated jar to the docker directory -->
+		<plugin>
+			<artifactId>maven-resources-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>copy-outputjar</id>
+					<phase>package</phase>
+					<goals>
+						<goal>copy-resources</goal>
+					</goals>
+					<configuration>
+						<outputDirectory>${project.basedir}/docker</outputDirectory>
+						<resources>
+							<resource>
+								<directory>${project.build.directory}</directory>
+								<include>${project.build.finalName}.jar</include>
+								<filtering>false</filtering>
+							</resource>
+						</resources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+	</plugins>
 	</build>
 
 	<!-- REMOVE THIS WHEN GA version IS AVAILABLE -->
