@@ -12,7 +12,7 @@ All docker support files are lockated in the *docker* directory
 
 - *Dockerfile*: this file describes the docker image of the service
 - *docker-compose.yml*: this file manages 2 containers, a container based on the image created with *Dockerfile* file and a container based on the official MongoDB image.
-- *docker-compose up --build -d*: build, start and link the two containers.
+- *docker-compose up --build -d*: build, start and link the 2 containers, this command is called from *start.sh*
 - *./start.sh*: builds a jar file without the Embedded MondoDB dependency and calls *docker-compose up --build -d*
 - *curl -f -s http://localhost:8081/application/health | jq '.status'*: can be used to check if the service is up or down
 - *docker-compose down*: stop the containers and remove them
