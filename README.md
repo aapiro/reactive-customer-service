@@ -13,7 +13,7 @@ Configuration files are located in the *docker* directory, there are 2 files:
 - *Dockerfile*: this file describes the docker image of the service
 - *docker-compose.yml*: will start a container with mongoDB and will use Dockerfile to build the image of the service and start a container with it.
 Use the following command to start, stop and test containers:
-- *docker-compose up -d* will start and link the two containers.
+- *docker-compose up --build -d* will build, start and link the two containers.
 - *curl -f -s http://localhost:8081/application/health | jq '.status'* can be used to check if the service is up or down
 - *docker-compose down* will stop the containers and remove them
 
