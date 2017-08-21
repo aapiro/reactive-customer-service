@@ -17,7 +17,7 @@ Use the following command to start, stop and test containers:
 - *curl -f -s http://localhost:8081/application/health | jq '.status'* can be used to check if the service is up or down
 - *docker-compose down* will stop the containers and remove them
 
-** Important **
+**_Important_**
 - *docker-compose up* and *docker-compose down* are run from the *docker* directory
 - This configuration has been tested with: Ubuntu Linux *16.04*, Docker CE *17.06.1-ce* and docker-compose *1.15.0*
 - If *jq* is not installed on your system you can simply remove *| jq '.status'* from the *curl* command
