@@ -7,18 +7,19 @@ More details can be found here: https://dserradji.wordpress.com/
 The "non-reactive" version is also available: [customer-service](https://github.com/dserradji/customer-service)
 
 ## Docker
-*reactive-customer-service* can be started inside a docker container with *docker-compose*.
 
-Configuration files are located in the *docker* directory, there are 2 files:
+All docker support files are lockated in the *docker* directory
+
 - *Dockerfile*: this file describes the docker image of the service
-- *docker-compose.yml*: will start a container with mongoDB and will use Dockerfile to build the image of the service and start a container with it.
-Use the following command to start, stop and test containers:
-- *docker-compose up --build -d* will build, start and link the two containers.
-- *curl -f -s http://localhost:8081/application/health | jq '.status'* can be used to check if the service is up or down
-- *docker-compose down* will stop the containers and remove them
+- *docker-compose.yml*: this file manages 2 containers, a container based on the image created with *Dockerfile* file and a container based on the official MongoDB image.
+- *docker-compose up --build -d*: build, start and link the two containers.
+- *./start.sh*: builds a jar file without the Embedded MondoDB dependency and calls *docker-compose up --build -d*
+- *curl -f -s http://localhost:8081/application/health | jq '.status'*: can be used to check if the service is up or down
+- *docker-compose down*: stop the containers and remove them
+- *./stop.sh*: is identical to *docker-compose down*
 
 **_Important_**
-- *docker-compose up* and *docker-compose down* are run from the *docker* directory
+- All scripts are run from the *docker* directory
 - This configuration has been tested with: Ubuntu Linux *16.04*, Docker CE *17.06.1-ce* and docker-compose *1.15.0*
 - If *jq* is not installed on your system you can simply remove *| jq '.status'* from the *curl* command
 - If you receive an error message from *docker-compose* about an unsupported version of *Dockerfile* please update your *docker-compose* as described [here](https://github.com/docker/compose/releases)
