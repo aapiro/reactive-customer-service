@@ -118,7 +118,7 @@
 							<skipTests>true</skipTests>
 						</configuration>
 					</plugin>
-					<!-- Copy the generated jar to the docker directory -->
+					<!-- Copy the generated fat jar to the docker directory -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-antrun-plugin</artifactId>
