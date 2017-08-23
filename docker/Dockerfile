@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:8-jdk-alpine
 EXPOSE 8081 8443
 RUN mkdir -p /opt
 COPY reactive-customer-service.jar /opt
