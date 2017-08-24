@@ -19,7 +19,7 @@ All docker support files are lockated in the *docker* directory
 - *./stop.sh*: is identical to *docker-compose down*
 
 **_Important_**
-- All scripts are run from the *docker* directory
 - This configuration has been tested with: Ubuntu Linux *16.04*, Docker CE *17.06.1-ce* and docker-compose *1.15.0*
+- All scripts (except start.sh and stop.sh) are run from the *docker* directory
 - If *jq* is not installed on your system you can simply remove *| jq '.status'* from the *curl* command
 - If you receive an error message from *docker-compose* about an unsupported version of *Dockerfile* please update your *docker-compose* as described [here](https://github.com/docker/compose/releases)
