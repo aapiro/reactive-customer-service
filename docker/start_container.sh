@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CALLER_DIRECTORY=$(pwd)
+SCRIPT_DIRECTORY=$(dirname $(realpath ${BASH_SOURCE[0]}))
+
 # Go back to the caller directory
 # then exit with the given code
 # or 0 if no code is provided
@@ -14,9 +17,6 @@ function exit_script {
     cd $CALLER_DIRECTORY
 	exit $EXIT_CODE
 }
-
-CALLER_DIRECTORY=$(pwd)
-SCRIPT_DIRECTORY=$(dirname $(realpath ${BASH_SOURCE[0]}))
 
 # Build the maven project with docker profile
 cd $SCRIPT_DIRECTORY/..
