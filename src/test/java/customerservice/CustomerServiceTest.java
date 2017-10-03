@@ -91,16 +91,20 @@ public class CustomerServiceTest {
 				.body(fromObject(newCustomer))
 				.exchange()
 				.block();
-
+		resp.close();
+		
 		assertThat(resp.statusCode()).isEqualTo(CREATED);
 		final String newCustomerUrl = resp.headers().header("Location").get(0);
 		assertThat(newCustomerUrl).contains("/customers/");
 
 		// ---------- Read ----------
-		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
+		final Customer createdCustomer = webClient.get()
+				.uri(newCustomerUrl)
+				.headers(headers -> headers.addAll(httpHeaders))
+				.retrieve()
+				.bodyToMono(Customer.class)
+				.block();
 		
-		assertThat(resp.statusCode()).isEqualTo(OK);
-		final Customer createdCustomer = resp.bodyToMono(Customer.class).block();
 		assertThat(createdCustomer.getId()).isNotNull();
 
 		// ---------- Update ----------
@@ -113,6 +117,7 @@ public class CustomerServiceTest {
 				.body(fromObject(customerToUpdate))
 				.exchange()
 				.block();
+		resp.close();
 
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
 		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
@@ -122,10 +127,20 @@ public class CustomerServiceTest {
 		assertThat(updatedCustomer.getLastName()).isEqualTo("Doe");
 
 		// ---------- Delete ----------
-		resp = webClient.delete().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
-
+		resp = webClient.delete()
+				.uri(newCustomerUrl)
+				.headers(headers -> headers.addAll(httpHeaders))
+				.exchange()
+				.block();
+		resp.close();
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
-		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
+
+		resp = webClient.get()
+				.uri(newCustomerUrl)
+				.headers(headers -> headers.addAll(httpHeaders))
+				.exchange()
+				.block();
+		resp.close();
 		assertThat(resp.statusCode()).isEqualTo(NOT_FOUND);
 	}
 
@@ -141,14 +156,15 @@ public class CustomerServiceTest {
 		/* Add Basic Authentication to the WebClient */
 		final WebClient webClientAuth = webClient.mutate().filter(basicAuthentication("clientId", "clientSecret")).build();
 		
-		final JsonNode tokenResp = webClientAuth.post().uri("/oauth/token")
+		return webClientAuth.post().uri("/oauth/token")
 			.contentType(APPLICATION_FORM_URLENCODED)
 			.accept(APPLICATION_JSON_UTF8)
 			.body(fromObject("grant_type=client_credentials"))
-			.exchange()
-			.flatMap(resp -> resp.bodyToMono(JsonNode.class))
+			.retrieve()
+			.bodyToMono(JsonNode.class)
+			.map(node -> node.get("access_token"))
+			.map(token -> token.asText())
 			.block();
 			
-		return tokenResp.get("access_token").asText();
 	}
 }
