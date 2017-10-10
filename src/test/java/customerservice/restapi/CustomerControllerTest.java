@@ -46,7 +46,9 @@ public class CustomerControllerTest {
 	public void shouldReturnAllCustomers() {
 
 		// Given
-		final List<Customer> customers = asList(Customer.ofType(PERSON).build(), Customer.ofType(COMPANY).build());
+		final List<Customer> customers = asList(
+				Customer.ofType(PERSON).build(), 
+				Customer.ofType(COMPANY).build());
 		when(repo.findAll()).thenReturn(Flux.fromIterable(customers));
 
 		// When

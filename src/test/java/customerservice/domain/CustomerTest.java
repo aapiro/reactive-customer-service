@@ -104,8 +104,12 @@ public class CustomerTest {
 	public void shouldUpdateACustomer() {
 
 		// Given
-		final Address address = Address.ofCountry("Shadaloo").withStreetNumber(110).withStreetName("Bison street")
-				.withCity("Shadaloo City").withZipcode("123456").build();
+		final Address address = Address.ofCountry("Shadaloo")
+				.withStreetNumber(110)
+				.withStreetName("Bison street")
+				.withCity("Shadaloo City")
+				.withZipcode("123456")
+				.build();
 
 		Customer customer = Customer.ofType(CustomerType.COMPANY)
 				.withLastName("Acme Corp.")

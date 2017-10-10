@@ -52,7 +52,8 @@ public class CustomerControllerWebTest {
 	@Test
 	public void shouldReturnAllCustomers() {
 
-		final List<Customer> mockCustomers = asList(Customer.ofType(PERSON).build(), Customer.ofType(COMPANY).build());
+		final List<Customer> mockCustomers = asList(
+				Customer.ofType(PERSON).build(), Customer.ofType(COMPANY).build());
 		given(repo.findAll()).willReturn(Flux.fromIterable(mockCustomers));
 
 		webClient.get().uri("/customers").accept(APPLICATION_JSON_UTF8).exchange()

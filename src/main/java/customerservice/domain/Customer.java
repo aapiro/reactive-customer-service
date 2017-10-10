@@ -108,20 +108,13 @@ public final class Customer {
 	}
 
 	/**
-	 * Make a copie of the map then return it so the reference does not escape.
+	 * Return a copy of the map so the reference does not escape.
 	 * 
-	 * @return A copie of the map
+	 * @return A copy of the map
 	 */
 	public Map<PhoneType, String> getPhones() {
 		
-		if (phones == null) {
-			return phones;
-		}
-		
-		final Map<PhoneType, String> copie = new HashMap<>();
-		phones.forEach((key, value) -> copie.put(key, value));
-		
-		return copie;
+		return phones == null ? phones : new HashMap<>(phones);
 	}
 
 	public String getEmail() {
