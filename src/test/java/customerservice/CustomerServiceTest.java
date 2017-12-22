@@ -59,7 +59,7 @@ public class CustomerServiceTest {
 
 	private WebClient createSSLWebClient() throws IOException {
 
-		/* Create a Reactor connector and tell it to trust our certificate */
+		/* Create a Reactor connector and make it trust our certificate */
 		final File pemFile = pemResource.getFile();
 		final ClientHttpConnector clientConnector = new ReactorClientHttpConnector(
 				options -> options.sslSupport(builder -> builder.trustManager(pemFile)));
