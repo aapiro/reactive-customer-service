@@ -91,7 +91,6 @@ public class CustomerServiceTest {
 				.body(fromObject(newCustomer))
 				.exchange()
 				.block();
-		resp.close();
 		
 		assertThat(resp.statusCode()).isEqualTo(CREATED);
 		final String newCustomerUrl = resp.headers().header("Location").get(0);
@@ -117,7 +116,6 @@ public class CustomerServiceTest {
 				.body(fromObject(customerToUpdate))
 				.exchange()
 				.block();
-		resp.close();
 
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
 		resp = webClient.get().uri(newCustomerUrl).headers(headers -> headers.addAll(httpHeaders)).exchange().block();
@@ -132,7 +130,6 @@ public class CustomerServiceTest {
 				.headers(headers -> headers.addAll(httpHeaders))
 				.exchange()
 				.block();
-		resp.close();
 		assertThat(resp.statusCode()).isEqualTo(NO_CONTENT);
 
 		resp = webClient.get()
@@ -140,7 +137,6 @@ public class CustomerServiceTest {
 				.headers(headers -> headers.addAll(httpHeaders))
 				.exchange()
 				.block();
-		resp.close();
 		assertThat(resp.statusCode()).isEqualTo(NOT_FOUND);
 	}
 
