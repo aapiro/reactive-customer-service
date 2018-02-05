@@ -1,4 +1,4 @@
-package customerservice.oauth2;
+	package customerservice.oauth2;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
